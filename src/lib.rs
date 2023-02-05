@@ -2,15 +2,15 @@ use rand::prelude::*;
 use rand::seq::SliceRandom;
 
 pub struct PongGame {
-    width: usize,
-    height: usize,
-    left_x: usize,
-    left_y: usize,
-    ball_x: usize,
-    ball_y: usize,
-    right_x: usize,
-    right_y: usize,
-    angle: usize,
+    pub width: usize,
+    pub height: usize,
+    pub left_x: usize,
+    pub left_y: usize,
+    pub ball_x: usize,
+    pub ball_y: usize,
+    pub right_x: usize,
+    pub right_y: usize,
+    pub angle: usize,
 }
 
 impl PongGame {
