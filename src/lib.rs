@@ -8,12 +8,35 @@ pub struct PongGame {
     pub left_y: usize,
     pub ball_x: usize,
     pub ball_y: usize,
+    pub ball_start_y: usize,
+    pub ball_start_x: usize,
     pub right_x: usize,
     pub right_y: usize,
     pub angle: usize,
+    pub paddle_size_x: f32,
+    pub paddle_size_y: f32,
+    pub ball_radius: f32,
 }
 
 impl PongGame {
+    pub fn new_size(width: usize, height: usize, left_x: usize, right_x: usize, paddle_starty: usize, ball_x: usize, ball_y: usize, paddle_size_x: f32, paddle_size_y: f32, ball_radius: f32) -> PongGame {
+        PongGame {
+            width,
+            height,
+            left_x,
+            left_y: paddle_starty,
+            ball_x,
+            ball_y,
+            ball_start_x: ball_x,
+            ball_start_y: ball_y,
+            right_x,
+            right_y: paddle_starty,
+            angle: 0,
+            paddle_size_x,
+            paddle_size_y,
+            ball_radius,
+        }
+    }
     pub fn new() -> PongGame {
         PongGame {
             width: 128,
@@ -22,9 +45,14 @@ impl PongGame {
             left_y: 22,
             ball_x: 63,
             ball_y: 31,
+            ball_start_x: 63,
+            ball_start_y: 31,
             right_x: 124,
             right_y: 22,
-            angle: 0
+            angle: 0,
+            paddle_size_x: 6f32,
+            paddle_size_y: 20f32,
+            ball_radius: 3f32,
         }
     }
 
@@ -43,18 +71,18 @@ impl PongGame {
     pub fn time_step(&mut self) {
         let mut rng = rand::thread_rng();
 
-        if (self.left_x <= self.ball_x && self.ball_x <= self.left_x+6) && (self.left_y <= self.ball_y && self.ball_y <= self.left_y+20) {
+        if (self.left_x <= self.ball_x && self.ball_x <= self.left_x+(self.paddle_size_x as usize)) && (self.left_y <= self.ball_y && self.ball_y <= self.left_y+(self.paddle_size_y as usize)) {
             self.angle = rng.gen_range(4..=6);
         }
 
-        if (self.right_x-6 <= self.ball_x && self.ball_x <= self.right_x) && (self.right_y <= self.ball_y && self.ball_y <= self.right_y+20) {
+        if (self.right_x-(self.paddle_size_x as usize) <= self.ball_x && self.ball_x <= self.right_x) && (self.right_y <= self.ball_y && self.ball_y <= self.right_y+(self.paddle_size_y as usize)) {
             self.angle = rng.gen_range(1..=3);
         }
 
-        if self.ball_x >= 127 || self.ball_x <= 0 {
+        if self.ball_x >= self.width-1 || self.ball_x <= 0 {
             // a score was made
-            self.ball_x = 63;
-            self.ball_y = 31;
+            self.ball_x = self.ball_start_x;
+            self.ball_y = self.ball_start_y;
         }
 
 
@@ -91,8 +119,8 @@ impl PongGame {
             self.ball_x += 1;
         }
 
-        if self.ball_y >= 63 {
-            self.ball_y = 63;
+        if self.ball_y >= self.height-1 {
+            self.ball_y = self.height-1;
             if 1 <= self.angle && self.angle <= 3 {
                 self.angle = 1;
             } else if 4 <= self.angle && self.angle <= 6 {
